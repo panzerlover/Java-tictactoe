@@ -3,6 +3,7 @@ package com.udacity;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by udacity 2016
@@ -152,49 +153,43 @@ public class Game {
      * @return String indicating the outcome of the game: "X wins" or "O wins" or "Tie" or "None"
      */
     public String checkGameWinner(char [][]grid){
-        // default value of "None"
-        String result = "None";
-        //turn the grid into a string we can evaluate
-        StringBuilder gridToString = new StringBuilder();
-        for (char[] played : grid) {
-            //add a space between arrays to avoid false positives
-            gridToString.append(played).append(" ");
-        }
-        //test grid for win conditions
-        boolean oWins = regTest("o", gridToString.toString());
-        boolean xWins = regTest("x", gridToString.toString());
-        // test if all spaces have been taken
-        if (!gridToString.toString().contains("-")) result = "Tie";
-        // return win condition
-        if (xWins) return "X wins";
-        if (oWins) return "O wins";
-
-        return result;
+        //turn the grid into a string we can evaluate, with a space at the end of each line
+        String gridToString = "";
+        for (char[] played : grid) gridToString += StringUtils.join(StringUtils.valueOf(played), " ");
+        //create win conditions
+        String oWins = "o{3}|(.o. .o. .o. )|(..o ..o ..o )|(o.. o.. o.. )|(o.. .o. ..o)|(..o .o. o..)";
+        String xWins = "x{3}|(.x. .x. .x. )|(..x ..x ..x )|(x.. x.. x.. )|(x.. .x. ..x)|(..x .x. x..)";
+        // return checked results
+        return    (gridToString.matches(oWins)) ? "O wins"
+                : (gridToString.matches(xWins)) ? "X wins"
+                : (!gridToString.contains("-")) ? "Tie"
+                : "None";
     }
 
-    /**
-     * Builds regex pattern and test for a winner
-     * tests data of game grid after it has been transformed into a string
-     * built regex tests for each separate win condition:
-     *      three characters in a column
-     *      three characters in a row (one test for each row)
-     *      three characters in a diagonal (both diagonals)
-     * @param t character to test, "x" or "o"
-     * @param testString string to test, in the form "--- --- --- "
-     * @return true if character passed has three in a row, otherwise returns false
-     */
-    private static boolean regTest(String t, String testString) {
-
-        final Pattern pattern = Pattern.compile(
-                t+"{3}|" +
-                "(." +t+". ." +t+". ." +t+". )|" +
-                "(.."+t+" .." +t+" .." +t+" )|" +
-                "("  +t+".. " +t+".. " +t+".. )|" +
-                "("  +t+".. ."+t+". .."+t+")|" +
-                "(.."+t+" ."  +t+". "  +t+"..)");
-        final Matcher matcher = pattern.matcher(testString);
-        return matcher.find();
-    }
+//    /**
+//     * Builds regex pattern and test for a winner
+//     * tests data of game grid after it has been transformed into a string
+//     * built regex tests for each separate win condition:
+//     *      three characters in a column
+//     *      three characters in a row (one test for each row)
+//     *      three characters in a diagonal (both diagonals)
+//     * @param t character to test, "x" or "o"
+//     * @param testString string to test, in the form "--- --- --- "
+//     * @return true if character passed has three in a row, otherwise returns false
+//     */
+//    private static boolean regTest(String t, String testString) {
+//
+//        final Pattern pattern = Pattern.compile(
+//                t+"{3}|" +
+//                "(." +t+". ." +t+". ." +t+". )|" +
+//                "(.."+t+" .." +t+" .." +t+" )|" +
+//                "("  +t+".. " +t+".. " +t+".. )|" +
+//                "("  +t+".. ."+t+". .."+t+")|" +
+//                "(.."+t+" ."  +t+". "  +t+"..)");
+//        System.out.println(pattern);
+//        final Matcher matcher = pattern.matcher(testString);
+//        return matcher.find();
+//    }
 
     /**
      * Main function
