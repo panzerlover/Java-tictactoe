@@ -22,7 +22,7 @@ public class GameTest {
         char[][] grid = {   {'-', 'o', 'x'},
                             {'o', 'x', 'x'},
                             {'-', 'o', 'x'}};
-        assertTrue("x horizontal win fail", game.checkGameWinner(grid).equalsIgnoreCase("x wins"));
+        assertTrue("x horizontal win fail", game.checkGameWinner(grid) == Result.X_WINS);
     }
 
     @Test
@@ -31,7 +31,7 @@ public class GameTest {
         char[][] grid2 = {  {'x', '-', '-'},
                             {'x', 'x', 'o'},
                             {'x', 'o', 'o'}};
-        assertTrue("x horizontal win fail", game.checkGameWinner(grid2).equalsIgnoreCase("x wins"));
+        assertTrue("x horizontal win fail", game.checkGameWinner(grid2) == Result.X_WINS);
     }
     @Test
     public void horizontal_x_win_case3() {

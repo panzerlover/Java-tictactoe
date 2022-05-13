@@ -1,8 +1,6 @@
 package com.udacity;
 
 import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -101,9 +99,10 @@ public class Game {
      */
     public boolean doChecks() {
         //check if there's a winner or tie ?
-        String winnerMessage = checkGameWinner(grid);
-        if (!winnerMessage.equals("None")) {
-            gui.gameOver(winnerMessage);
+        Result winnerMessage = checkGameWinner(grid);
+        System.out.println(winnerMessage);
+        if (winnerMessage != Result.NONE) {
+            gui.gameOver(String.valueOf(winnerMessage));
             newGame(false);
             return true;
         }
@@ -142,8 +141,6 @@ public class Game {
         return;
     }
 
-
-
     /**
      * Checks if the game has ended either because a player has won, or if the game has ended as a tie.
      * If game hasn't ended the return string has to be "None",
@@ -152,44 +149,18 @@ public class Game {
      * @param grid 2D array of characters representing the game board
      * @return String indicating the outcome of the game: "X wins" or "O wins" or "Tie" or "None"
      */
-    public String checkGameWinner(char [][]grid){
+    public Result checkGameWinner(char [][]grid){
         //turn the grid into a string we can evaluate, with a space at the end of each line
         String gridToString = "";
-        for (char[] played : grid) gridToString += StringUtils.join(StringUtils.valueOf(played), " ");
-        //create win conditions
-        String oWins = "o{3}|(.o. .o. .o. )|(..o ..o ..o )|(o.. o.. o.. )|(o.. .o. ..o)|(..o .o. o..)";
-        String xWins = "x{3}|(.x. .x. .x. )|(..x ..x ..x )|(x.. x.. x.. )|(x.. .x. ..x)|(..x .x. x..)";
-        // return checked results
-        return    (gridToString.matches(oWins)) ? "O wins"
-                : (gridToString.matches(xWins)) ? "X wins"
-                : (!gridToString.contains("-")) ? "Tie"
-                : "None";
+        for (char[] played : grid){
+            gridToString += StringUtils.join(StringUtils.valueOf(played), " ");
+        }
+        // create Enum for win messages
+        for (Result result: Result.values()){
+            if (gridToString.matches(result.regex)) return result;
+        }
+        return Result.NONE;
     }
-
-//    /**
-//     * Builds regex pattern and test for a winner
-//     * tests data of game grid after it has been transformed into a string
-//     * built regex tests for each separate win condition:
-//     *      three characters in a column
-//     *      three characters in a row (one test for each row)
-//     *      three characters in a diagonal (both diagonals)
-//     * @param t character to test, "x" or "o"
-//     * @param testString string to test, in the form "--- --- --- "
-//     * @return true if character passed has three in a row, otherwise returns false
-//     */
-//    private static boolean regTest(String t, String testString) {
-//
-//        final Pattern pattern = Pattern.compile(
-//                t+"{3}|" +
-//                "(." +t+". ." +t+". ." +t+". )|" +
-//                "(.."+t+" .." +t+" .." +t+" )|" +
-//                "("  +t+".. " +t+".. " +t+".. )|" +
-//                "("  +t+".. ."+t+". .."+t+")|" +
-//                "(.."+t+" ."  +t+". "  +t+"..)");
-//        System.out.println(pattern);
-//        final Matcher matcher = pattern.matcher(testString);
-//        return matcher.find();
-//    }
 
     /**
      * Main function
